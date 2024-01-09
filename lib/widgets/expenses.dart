@@ -13,7 +13,18 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpenseState extends State<Expenses> {
-  final List<Expense> _registeredExpenses = [];
+  final List<Expense> _registeredExpenses = [
+    Expense(
+        title: 'flutter Course',
+        amount: 19.99,
+        date: DateTime.now(),
+        category: Category.work),
+    Expense(
+        title: 'Cinema',
+        amount: 15.69,
+        date: DateTime.now(),
+        category: Category.leisure),
+  ];
 
   void _openAddExpensesOverlay() {
     showModalBottomSheet(
@@ -30,24 +41,28 @@ class _ExpenseState extends State<Expenses> {
   }
 
   void _removeExpenses(Expense expense) {
-    final expenseIndex=_registeredExpenses.indexOf(expense);
+    final expenseIndex = _registeredExpenses.indexOf(expense);
     setState(() {
       _registeredExpenses.remove(expense);
     });
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(
-          duration: const Duration(seconds: 3),
-          content: const Text('Expense Deleted.'),
-          action: SnackBarAction(label: 'Undo', onPressed: (){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 3),
+      content: const Text('Expense Deleted.'),
+      action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
             setState(() {
               _registeredExpenses.insert(expenseIndex, expense);
             });
-          }),));
+          }),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    print(MediaQuery.of(context).size.height);
     Widget maincontent = const Center(
       child: Text('No Expenses Found. Start Adding Some!'),
     );
@@ -68,9 +83,13 @@ class _ExpenseState extends State<Expenses> {
               onPressed: _openAddExpensesOverlay, icon: const Icon(Icons.add)),
         ],
       ),
-      body: Column(
-        children: [Text('The Chart'), Expanded(child: maincontent)],
-      ),
+      body: width < 600
+          ? Column(
+              children: [Text('The Chart'), Expanded(child: maincontent)],
+            )
+          : Row(
+              children: [ Expanded(child: Text('The Chart'), ),Expanded(child: maincontent)],
+            ),
     );
   }
 }
